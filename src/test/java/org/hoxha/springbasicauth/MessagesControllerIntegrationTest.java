@@ -2,7 +2,6 @@ package org.hoxha.springbasicauth;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.fail;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import org.hoxha.springbasicauth.model.Message;
@@ -14,7 +13,6 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
 class MessagesControllerIntegrationTest {
@@ -45,12 +43,8 @@ class MessagesControllerIntegrationTest {
     void when_wrong_user_name_or_password_then_expect_error() {
         TestRestTemplate templateWithoutCredentials = new TestRestTemplate();
 
-        try {
-            templateWithoutCredentials.getForEntity(url, String.class);
-            fail("It should not have reached this point.");
-        } catch (HttpClientErrorException e) {
-            assertEquals(HttpStatus.UNAUTHORIZED, e.getStatusCode());
-        }
+        ResponseEntity<String> responseEntity = templateWithoutCredentials.getForEntity(url, String.class);
+        assertEquals(HttpStatus.UNAUTHORIZED, responseEntity.getStatusCode());
     }
 
     @Test
